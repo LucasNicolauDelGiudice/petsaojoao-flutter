@@ -19,16 +19,16 @@ class _FoundAnimalRegisterState extends State<FoundAnimalRegister> {
   double longitude;
   Position currentLocation;
   File _image;
-  List<File> imagens = [];
+  List<File> images = [];
   int currentIndex = -1;
   int count = 0;
   int numPath = 0; /// variável na muneração da pasta no storage
   List<Address> addresses = [];
   Address first;
-  String rua;
-  String numero;
-  String bairro;
-  String municipio;
+  String street;
+  String number;
+  String neighborhood;
+  String county;
 
   Future<Position> locateUser() async {
     return Geolocator()
@@ -50,17 +50,17 @@ class _FoundAnimalRegisterState extends State<FoundAnimalRegister> {
     addresses = await Geocoder.local.findAddressesFromCoordinates(coordinates);
     first = addresses.first;
     setState(() {
-      rua = first.thoroughfare;
-      numero = first.subThoroughfare;
-      bairro = first.subLocality;
-      municipio = first.subAdminArea;
+      street = first.thoroughfare;
+      number = first.subThoroughfare;
+      neighborhood = first.subLocality;
+      county = first.subAdminArea;
     });
   }
 
   @override
   void initState() {
     super.initState();
-    imagens.clear();
+    images.clear();
     getUserLocation().then((_) {
       return getLocation();
     });
@@ -77,7 +77,7 @@ class _FoundAnimalRegisterState extends State<FoundAnimalRegister> {
 
           setState(() {
             _image = file;
-            imagens.add(_image);
+            images.add(_image);
             count++;
             currentIndex++;
             print(count);
@@ -90,7 +90,7 @@ class _FoundAnimalRegisterState extends State<FoundAnimalRegister> {
     }
 
     Future uploadImage(BuildContext context) async {
-      imagens.map((img) async {
+      images.map((img) async {
         String urlmage = basename(img.path);
         StorageReference fireRef =
             FirebaseStorage.instance.ref().child("imagens $numPath/" + urlmage);
@@ -111,10 +111,10 @@ class _FoundAnimalRegisterState extends State<FoundAnimalRegister> {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
             builder: (context) => Transition(
-              rua: rua,
-              numero: numero,
-              bairro: bairro,
-              municipio: municipio,
+              rua: street,
+              numero: number,
+              bairro: neighborhood,
+              municipio: county,
             ),
           ),
         );
@@ -130,11 +130,11 @@ class _FoundAnimalRegisterState extends State<FoundAnimalRegister> {
               children: <Widget>[
                 Container(
                   height: 400,
-                  child: _image != null || imagens.length != 0
+                  child: _image != null || images.isEmpty != 0
                       ? Stack(
                           alignment: AlignmentDirectional.topCenter,
                           children: <Widget>[
-                            Image.file(imagens[currentIndex],
+                            Image.file(images[currentIndex],
                                 width: MediaQuery.of(context).size.width,
                                 fit: BoxFit.cover),
                             Positioned(
@@ -148,13 +148,13 @@ class _FoundAnimalRegisterState extends State<FoundAnimalRegister> {
                                 ),
                                 onPressed: () {
                                   setState(() {
-                                    imagens.removeAt(currentIndex);
-                                    imagens.length == 0
+                                    images.removeAt(currentIndex);
+                                    images.isEmpty == 0
                                         ? _image = null
                                         : print("");
-                                    print(imagens.length);
+                                    print(images.length);
                                     count--;
-                                    currentIndex = imagens.length - 1;
+                                    currentIndex = images.length - 1;
                                   });
                                 },
                               ),
@@ -228,8 +228,8 @@ class _FoundAnimalRegisterState extends State<FoundAnimalRegister> {
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
-                        children: imagens.map((m) {
-                      return imagens.length == 0
+                        children: images.map((m) {
+                      return images.isEmpty == 0
                           ? Container()
                           : Container(
                               margin: EdgeInsets.only(right: 10),
@@ -264,7 +264,7 @@ class _FoundAnimalRegisterState extends State<FoundAnimalRegister> {
                           color: Colors.white,
                           size: 50,
                         ),
-                        onPressed: imagens.length != 3
+                        onPressed: images.length != 3
                             ? getImage
                             : () async {
                                 await uploadImage(context);

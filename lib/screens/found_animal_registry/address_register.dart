@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 
 class AddressRegister extends StatelessWidget {
-  final String rua;
-  final String numero;
-  final String bairro;
-  final String municipio;
+  final String street;
+  final String number;
+  final String neighborhood;
+  final String county;
   AddressRegister({
-    this.rua,
-    this.numero,
-    this.bairro,
-    this.municipio,
+    this.street,
+    this.number,
+    this.neighborhood,
+    this.county,
   });
   @override
   Widget build(BuildContext context) {
@@ -70,15 +70,15 @@ class AddressRegister extends StatelessWidget {
             ),
 
             /// Detalhes do widget no final da página
-            info(rua + ", $numero"),
+            info(street + ", $number"),
             SizedBox(
               height: 20,
             ),
-            info(bairro),
+            info(neighborhood),
             SizedBox(
               height: 20,
             ),
-            info(municipio),
+            info(county),
           ],
         ),
       ),

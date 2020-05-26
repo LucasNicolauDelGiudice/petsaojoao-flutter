@@ -25,10 +25,10 @@ class _TransitionState extends State<Transition> {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) => AddressRegister(
-            rua: widget.rua,
-            numero: widget.numero,
-            bairro: widget.bairro,
-            municipio: widget.municipio,
+            street: widget.rua,
+            number: widget.numero,
+            neighborhood: widget.bairro,
+            county: widget.municipio,
           ),
         ),
       );
