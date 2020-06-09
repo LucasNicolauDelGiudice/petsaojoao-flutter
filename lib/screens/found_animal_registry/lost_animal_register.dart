@@ -5,24 +5,28 @@ import 'package:geocoder/geocoder.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
+import 'package:petsaojoao/models/back_lost_animal/locate_animal.dart';
 import 'package:petsaojoao/screens/found_animal_registry/transition_page.dart';
+import 'package:camera/camera.dart';
 //Acompanhe desing do projeto aqui --> https://www.figma.com/file/GYFrt79mzIbOUXXmFyDgwL/Material-Baseline-Design-Kit?node-id=38%3A5814
 
 class FoundAnimalRegister extends StatefulWidget {
   @override
-  _FoundAnimalRegisterState createState() =>
-      _FoundAnimalRegisterState();
+  _FoundAnimalRegisterState createState() => _FoundAnimalRegisterState();
 }
 
 class _FoundAnimalRegisterState extends State<FoundAnimalRegister> {
   double latitude;
   double longitude;
   Position currentLocation;
-  File _image;
-  List<File> images = [];
+  PickedFile _image;
+  List<PickedFile> images = [];
   int currentIndex = -1;
   int count = 0;
-  int numPath = 0; /// variável na muneração da pasta no storage
+  int numPath = 0;
+  final _picker = ImagePicker();
+
+  /// variável na muneração da pasta no storage
   List<Address> addresses = [];
   Address first;
   String street;
@@ -30,13 +34,8 @@ class _FoundAnimalRegisterState extends State<FoundAnimalRegister> {
   String neighborhood;
   String county;
 
-  Future<Position> locateUser() async {
-    return Geolocator()
-        .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-  }
-
-  Future getUserLocation() async {
-    currentLocation = await locateUser();
+  Future getAnimalLocation() async {
+    currentLocation = await locateAnimal();
     setState(() {
       latitude = currentLocation.latitude;
       longitude = currentLocation.longitude;
@@ -61,18 +60,18 @@ class _FoundAnimalRegisterState extends State<FoundAnimalRegister> {
   void initState() {
     super.initState();
     images.clear();
-    getUserLocation().then((_) {
-      return getLocation();
-    });
+    getAnimalLocation().then((value) => getLocation());
   }
 
   @override
   Widget build(BuildContext context) {
     Future getImage() async {
       try {
-        await ImagePicker.pickImage(
+        await _picker
+            .getImage(
           source: ImageSource.camera,
-        ).then((file) {
+        )
+            .then((file) {
           if (file == null) return;
 
           setState(() {
@@ -94,7 +93,7 @@ class _FoundAnimalRegisterState extends State<FoundAnimalRegister> {
         String urlmage = basename(img.path);
         StorageReference fireRef =
             FirebaseStorage.instance.ref().child("imagens $numPath/" + urlmage);
-        StorageUploadTask uploadTask = fireRef.putFile(img);
+        StorageUploadTask uploadTask = fireRef.putFile(File(img.path));
         await uploadTask.onComplete;
       }).toList();
       setState(() {
@@ -111,10 +110,10 @@ class _FoundAnimalRegisterState extends State<FoundAnimalRegister> {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
             builder: (context) => Transition(
-              rua: street,
-              numero: number,
-              bairro: neighborhood,
-              municipio: county,
+              street: street,
+              number: number,
+              neighborhood: neighborhood,
+              county: county,
             ),
           ),
         );
@@ -130,11 +129,11 @@ class _FoundAnimalRegisterState extends State<FoundAnimalRegister> {
               children: <Widget>[
                 Container(
                   height: 400,
-                  child: _image != null || images.isEmpty != 0
+                  child: _image != null || images.isNotEmpty
                       ? Stack(
                           alignment: AlignmentDirectional.topCenter,
                           children: <Widget>[
-                            Image.file(images[currentIndex],
+                            Image.file(File(images[currentIndex].path),
                                 width: MediaQuery.of(context).size.width,
                                 fit: BoxFit.cover),
                             Positioned(
@@ -149,9 +148,7 @@ class _FoundAnimalRegisterState extends State<FoundAnimalRegister> {
                                 onPressed: () {
                                   setState(() {
                                     images.removeAt(currentIndex);
-                                    images.isEmpty == 0
-                                        ? _image = null
-                                        : print("");
+                                    images.isEmpty ? _image = null : print("");
                                     print(images.length);
                                     count--;
                                     currentIndex = images.length - 1;
@@ -211,13 +208,11 @@ class _FoundAnimalRegisterState extends State<FoundAnimalRegister> {
                       children: <TextSpan>[
                         TextSpan(
                           text: "$count " + "de 3 ",
-                          style: TextStyle(
-                              fontSize: 20, color: Colors.black),
+                          style: TextStyle(fontSize: 20, color: Colors.black),
                         ),
                         TextSpan(
                           text: "fotos registradas",
-                          style: TextStyle(
-                              fontSize: 15, color: Colors.black),
+                          style: TextStyle(fontSize: 15, color: Colors.black),
                         ),
                       ],
                     ),
@@ -229,14 +224,14 @@ class _FoundAnimalRegisterState extends State<FoundAnimalRegister> {
                     scrollDirection: Axis.horizontal,
                     child: Row(
                         children: images.map((m) {
-                      return images.isEmpty == 0
+                      return images.isEmpty
                           ? Container()
                           : Container(
                               margin: EdgeInsets.only(right: 10),
                               height: 45,
                               width: 40,
                               child: Image.file(
-                                m,
+                                File(m.path),
                                 fit: BoxFit.cover,
                               ),
                             );
@@ -250,7 +245,10 @@ class _FoundAnimalRegisterState extends State<FoundAnimalRegister> {
                   height: 2,
                   color: Colors.black,
                 ),
-                SizedBox(height: 20),
+                SizedBox(
+                    height: images.isEmpty
+                        ? MediaQuery.of(context).size.height / 8
+                        : MediaQuery.of(context).size.height / 18),
                 Center(
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(45),

@@ -1,34 +1,55 @@
 import 'package:flutter/material.dart';
 
-class AddressRegister extends StatelessWidget {
+class AddressRegister extends StatefulWidget {
   final String street;
   final String number;
   final String neighborhood;
   final String county;
-  AddressRegister({
-    this.street,
-    this.number,
-    this.neighborhood,
-    this.county,
-  });
+  AddressRegister(
+      {Key key, this.street, this.neighborhood, this.number, this.county})
+      : super(key: key);
+  @override
+  _AddressRegisterState createState() => _AddressRegisterState();
+}
+
+class _AddressRegisterState extends State<AddressRegister> {
+  bool isEditable = false;
+  TextEditingController _streetController;
+  TextEditingController _neighborhoodController;
+  TextEditingController _countyController;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       /// botão inferior
-      floatingActionButton: ClipRRect(
-        borderRadius: BorderRadius.circular(45),
-        child: Container(
-          width: 60,
-          height: 60,
-          color: Colors.blue,
-          child: IconButton(
-              icon: Icon(
-                Icons.check,
-                color: Colors.white,
-                size: 30,
-              ),
-              onPressed: () {}),
-        ),
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: <Widget>[
+          FloatingActionButton(
+            backgroundColor: Colors.blue[200],
+            heroTag: "btn1",
+            child: Icon(
+              Icons.edit,
+              size: 30,
+              color: Colors.black,
+            ),
+            onPressed: () {
+              setState(() {
+                isEditable = !isEditable;
+              });
+            },
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          FloatingActionButton(
+            heroTag: "btn2",
+            child: Icon(
+              Icons.check,
+              size: 30,
+            ),
+            onPressed: () {},
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -59,8 +80,8 @@ class AddressRegister extends StatelessWidget {
                     padding: EdgeInsets.all(10),
                     child: Text("Esses dados serão divulgados",
                         textAlign: TextAlign.left,
-                        style: TextStyle(
-                            color: Colors.black, letterSpacing: 1.5)),
+                        style:
+                            TextStyle(color: Colors.black, letterSpacing: 1.5)),
                   ),
                 ),
               ),
@@ -70,22 +91,23 @@ class AddressRegister extends StatelessWidget {
             ),
 
             /// Detalhes do widget no final da página
-            info(street + ", $number"),
+            info(widget.street + ", ${widget.number}", isEditable,
+                _streetController),
             SizedBox(
               height: 20,
             ),
-            info(neighborhood),
+            info(widget.neighborhood, isEditable, _neighborhoodController),
             SizedBox(
               height: 20,
             ),
-            info(county),
+            info(widget.county, isEditable, _countyController),
           ],
         ),
       ),
     );
   }
 
-  Widget info(String texto) {
+  Widget info(String texto, bool isEditable, TextEditingController controller) {
     return Padding(
         padding: EdgeInsets.only(
           left: 10,
@@ -96,6 +118,8 @@ class AddressRegister extends StatelessWidget {
           child: Padding(
             padding: EdgeInsets.all(8),
             child: TextFormField(
+              controller: controller,
+              enabled: isEditable,
               decoration: InputDecoration(
                 prefixIcon: Icon(
                   Icons.location_on,
