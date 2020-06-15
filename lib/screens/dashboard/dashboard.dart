@@ -1,10 +1,10 @@
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
-import 'package:petsaojoao/screens/found_animal_registry/lost_animal_register_transition.dart';
 import 'package:petsaojoao/screens/reg_my_pet/reg_my_pet.dart';
+import 'package:petsaojoao/screens/animal_reg_found/animal_reg_found.dart';
 import 'package:petsaojoao/screens/register_tutor/register_tutor.dart';
 
-import '../notification/pet_found/pet_found.dart';
+import '../notification/pet_found/pet_found_board.dart';
 
 //Acompanhe desing do projeto aqui --> https://www.figma.com/file/GYFrt79mzIbOUXXmFyDgwL/Material-Baseline-Design-Kit?node-id=38%3A5814
 
@@ -39,7 +39,7 @@ class Dashboard extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => LostAnimalTransition()),
+                        builder: (context) => AnimalRegisterFound()),
                   );
                 },
                 child: Text("Cadastro Animal Econntrado ")),
@@ -48,7 +48,7 @@ class Dashboard extends StatelessWidget {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => RegPet()),
+                    MaterialPageRoute(builder: (context) => RegMyPet()),
                   );
                 },
                 child: Text("Cadastro  Meu Animal  ")),
@@ -57,7 +57,7 @@ class Dashboard extends StatelessWidget {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => PetFound()),
+                    MaterialPageRoute(builder: (context) => PetFoundBoard()),
                   );
                 },
                 child: Text("Pet Notification ")),

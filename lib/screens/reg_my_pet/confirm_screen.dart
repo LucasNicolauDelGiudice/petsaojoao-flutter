@@ -2,12 +2,11 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'package:petsaojoao/models/back_reg_my_pet/orientation_organize.dart';
 import 'package:petsaojoao/models/back_reg_my_pet/sizes_info.dart';
-
 import 'package:petsaojoao/components/reg_my_pet/alert_confirm.dart';
+import '../../models/back_reg_my_pet/sizes_info.dart';
 
-import 'end_reg_my_pet.dart';
+import 'package:petsaojoao/screens/reg_my_pet/end_register_pet_photos.dart';
 
 class ConfirmScreen extends StatefulWidget {
   final String image1;
@@ -55,21 +54,21 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
               children: <Widget>[
                 Center(
                   child: Container(
-                    height: widgetSize(context, 1.55),
+                    height: CalculateSize().by(context, 1.55),
                     child: new Image.file(File(bigImage)),
                   ),
                 ),
                 Container(
                   padding: EdgeInsets.only(
-                      left: widgetSize(context, 50),
-                      top: widgetSize(context, 1.75)),
+                      left: CalculateSize().by(context, 50),
+                      top: CalculateSize().by(context, 1.75)),
                   child: FlatButton(
                     onPressed: () {
-                      ConfirmAlert().showAlert(context, num);
+                      PopUpSelector().showDelete(context, num);
                     },
                     child: Icon(
                       Icons.delete,
-                      size: widgetSize(context, 18),
+                      size: CalculateSize().by(context, 18),
                       color: Colors.red[200],
                     ),
                   ),
@@ -101,7 +100,7 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Container(
-                    height: widgetSize(context, 10),
+                    height: CalculateSize().by(context, 10),
                     padding: EdgeInsets.only(right: 20),
                     child: InkWell(
                       onTap: () {
@@ -116,7 +115,7 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
                     ),
                   ),
                   Container(
-                    height: widgetSize(context, 10),
+                    height: CalculateSize().by(context, 10),
                     padding: EdgeInsets.only(right: 20),
                     child: InkWell(
                       onTap: () {
@@ -131,7 +130,7 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
                     ),
                   ),
                   Container(
-                    height: widgetSize(context, 10),
+                    height: CalculateSize().by(context, 10),
                     child: InkWell(
                       onTap: () {
                         setState(
@@ -157,18 +156,7 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
         floatingActionButton: FloatingActionButton(
           child: Icon(Icons.check),
           onPressed: () async {
-            releaseOrientation();
-
-            try {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => EndRegMyPet(),
-                ),
-              );
-            } catch (e) {
-              print(e);
-            }
+            Navigator.push(context, MaterialPageRoute( builder: (contexto) => EndRegisterPetPhotos()));
           },
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
